@@ -40,7 +40,8 @@ namespace bondev
 		template <typename Func, typename... Args>
         void giveTask(Func&& func, Args&&... args);
 
-		void setThreadName(const std::string& name) { _threadName = name; }
+        void setThreadName(const std::string& name) { _threadName = name; }
+        void setThreadSyncType(ThreadSyncType syncType) { _syncType = syncType; }
 
         [[nodiscard]] WorkStatus getWorkStatus() const { return _workStatus; }
 		[[nodiscard]] std::thread::id getThreadId() const { return _threadId; }
