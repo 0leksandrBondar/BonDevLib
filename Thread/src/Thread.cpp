@@ -14,6 +14,9 @@ namespace bondev
         _stop = false;
         _workStatus = WorkStatus::InProgress;
 		_thread = std::jthread([this]() { runTasks(); });
+
+        if (_syncType == ThreadSyncType::Detach)
+            _thread.detach();
 	}
 
 	void Thread::runTasks()
