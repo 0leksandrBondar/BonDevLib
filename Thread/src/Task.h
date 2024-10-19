@@ -22,13 +22,17 @@ namespace bondev
     class Task
     {
     public:
+        Task() = default;   
         template <typename Func, typename... Args>
-        Task(Func&& func, Args&&... args)
-            : _task(std::bind(std::forward<Func>(func), std::forward<Args>(args)...))
+        Task(Func&& func, Args&&... args, TaskPriority priority = TaskPriority::Low)
+            : _task(std::bind(std::forward<Func>(func), std::forward<Args>(args)...)),
+              _taskPriority{ priority }
         {
         }
 
         void execute() { _task(); }
+
+        void setTaskPriority(const TaskPriority priority) { _taskPriority = priority; }
 
         [[nodiscard]] TaskStatus getTaskStatus() const { return _taskStatus; }
         [[nodiscard]] TaskPriority getTaskPriority() const { return _taskPriority; }
