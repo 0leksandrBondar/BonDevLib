@@ -25,8 +25,6 @@ namespace bondev
 
 	public:
 		Thread() = default;
-		explicit Thread(const std::string& name, ThreadSyncType syncType = ThreadSyncType::Join);
-
         template <typename Func, typename... Args>
         Thread(Func&& func, Args&&... args);
 
@@ -34,8 +32,6 @@ namespace bondev
 
 		void runThread();
         void stopThread();
-
-		void waitForAll();
 
 		template <typename Func, typename... Args>
         void giveTask(Func&& func, Args&&... args);

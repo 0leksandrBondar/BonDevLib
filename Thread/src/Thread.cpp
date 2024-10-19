@@ -2,8 +2,6 @@
 
 namespace bondev
 {
-	Thread::Thread(const std::string& name, ThreadSyncType syncType) : _threadName{ name }, _syncType{ syncType }{}
-
 	Thread::~Thread()
 	{ 
 		stopThread();
@@ -45,11 +43,6 @@ namespace bondev
         if (_syncType != ThreadSyncType::Detach && _thread.joinable())
             _thread.join();
     }
-
-    void Thread::waitForAll()
-	{
-
-	}
 
 } // namespace bondev
 
