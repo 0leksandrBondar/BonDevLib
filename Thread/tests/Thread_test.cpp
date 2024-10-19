@@ -8,18 +8,18 @@ TEST(THREAD, TasksCompleteSuccessfully_test)
 
     EXPECT_EQ(bondev::WorkStatus::Waiting, thread.getWorkStatus());
 
-    thread.giveTask(
-        []()
-        {
-            std::cout << "TASK 1 << \n";
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        });
-    thread.giveTask(
-        []()
-        {
-            std::cout << "TASK 2 << \n";
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        });
+    thread.giveTask(bondev::TaskPriority::Low,
+                    []()
+                    {
+                        std::cout << "TASK 1 << \n";
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                    });
+    thread.giveTask(bondev::TaskPriority::Low,
+                    []()
+                    {
+                        std::cout << "TASK 2 << \n";
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                    });
     thread.runThread();
 
     EXPECT_EQ(bondev::WorkStatus::InProgress, thread.getWorkStatus());
@@ -33,18 +33,18 @@ TEST(THREAD, ForcedThreadStop_test)
 
     EXPECT_EQ(bondev::WorkStatus::Waiting, thread.getWorkStatus());
 
-    thread.giveTask(
-        []()
-        {
-            std::cout << "TASK 1 \n";
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        });
-    thread.giveTask(
-        []()
-        {
-            std::cout << "TASK 2 \n";
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        });
+    thread.giveTask(bondev::TaskPriority::Low,
+                    []()
+                    {
+                        std::cout << "TASK 1 \n";
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                    });
+    thread.giveTask(bondev::TaskPriority::Low,
+                    []()
+                    {
+                        std::cout << "TASK 2 \n";
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                    });
 
     thread.runThread();
 
@@ -61,15 +61,15 @@ TEST(THREAD, ThreadSyncType_test)
 
     thread_detach.setThreadSyncType(bondev::ThreadSyncType::Detach);
 
-    thread_detach.giveTask(
-        []()
-        {
-            for (size_t i = 0; i < 100; i++)
-            {
-                std::cout << "DETACH TEST\n";
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-            }
-        });
+    thread_detach.giveTask(bondev::TaskPriority::Low,
+                           []()
+                           {
+                               for (size_t i = 0; i < 100; i++)
+                               {
+                                   std::cout << "DETACH TEST\n";
+                                   std::this_thread::sleep_for(std::chrono::seconds(1));
+                               }
+                           });
     thread_detach.runThread();
     std::this_thread::sleep_for(std::chrono::seconds(4));
 }

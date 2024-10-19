@@ -28,7 +28,7 @@ namespace bondev
     public:
         Thread() = default;
         template <typename Func, typename... Args>
-        Thread(Func&& func, Args&&... args, TaskPriority priority = TaskPriority::Low);
+        Thread(bondev::TaskPriority priority, Func&& func, Args&&... args);
 
         virtual ~Thread();
 
@@ -36,7 +36,12 @@ namespace bondev
         void stopThread();
 
         template <typename Func, typename... Args>
-        void giveTask(Func&& func, Args&&... args, TaskPriority priority = TaskPriority::Low);
+        void giveTask(bondev::TaskPriority priority, Func&& func, Args&&... args)
+        {
+            bondev::Task task = std::bind(std::forward<Func>(func), std::forward<Args>(args)...);
+            task.setTaskPriority(priority);
+            _tasks.push(task);
+        }
 
         void setThreadName(const std::string& name) { _threadName = name; }
         void setThreadSyncType(ThreadSyncType syncType) { _syncType = syncType; }
@@ -58,12 +63,4 @@ namespace bondev
         WorkStatus _workStatus{ WorkStatus::Waiting };
         ThreadSyncType _syncType{ ThreadSyncType::Join };
     };
-
-    template <typename Func, typename... Args>
-    void Thread::giveTask(Func&& func, Args&&... args, TaskPriority priority)
-    {
-        bondev::Task task = std::bind(std::forward<Func>(func), std::forward<Args>(args)...);
-        task.setTaskPriority(priority);
-        _tasks.push(task);
-    }
 } // namespace bondev

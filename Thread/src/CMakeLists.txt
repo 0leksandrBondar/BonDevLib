@@ -5,7 +5,7 @@ add_library(bondevThread
 	Thread.cpp
 	Thread.h
 	Task.h
-	Task.cpp
+	
 )
 
 target_include_directories(bondevThread PUBLIC ./)
