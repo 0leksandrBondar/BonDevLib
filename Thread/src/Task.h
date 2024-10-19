@@ -4,6 +4,21 @@
 
 namespace bondev
 {
+
+    enum class TaskStatus
+    {
+        Waiting,
+        Started,
+        Complited
+    };
+
+    enum class TaskPriority
+    {
+        Low,
+        Normal,
+        High
+    };
+
     class Task
     {
     public:
@@ -15,7 +30,12 @@ namespace bondev
 
         void execute() { _task(); }
 
+        [[nodiscard]] TaskStatus getTaskStatus() const { return _taskStatus; }
+        [[nodiscard]] TaskPriority getTaskPriority() const { return _taskPriority; }
+
     private:
         std::function<void()> _task;
+        TaskStatus _taskStatus{ TaskStatus::Waiting };
+        TaskPriority _taskPriority{ TaskPriority::Low };
     };
 } // namespace bondev
