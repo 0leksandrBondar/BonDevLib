@@ -20,7 +20,7 @@ namespace bondev
         High
     };
 
-    class Task
+    class Task final
     {
     public:
         Task() = default;
@@ -28,17 +28,12 @@ namespace bondev
         Task& operator=(const Task&) = delete;
 
         template <typename Func, typename... Args>
-        Task(Func&& func, Args&&... args)
-            : _task(std::bind(std::forward<Func>(func), std::forward<Args>(args)...))
+        explicit Task(Func&& func, Args&&... args)
+            : _task{ [&]() { std::invoke(std::forward<Func>(func), std::forward<Args>(args)...); } }
         {
         }
 
-        Task(Task&& other) noexcept
-            : _task(std::move(other._task)),
-              _taskStatus(other._taskStatus.load()),
-              _taskPriority(other._taskPriority.load())
-        {
-        }
+        Task(Task&& other) noexcept { *this = std::move(other); }
 
         Task& operator=(Task&& other) noexcept
         {
@@ -51,7 +46,7 @@ namespace bondev
             return *this;
         }
 
-        void execute() { _task(); }
+        void execute() const { _task(); }
 
         void setTaskPriority(const TaskPriority priority) { _taskPriority = priority; }
 
