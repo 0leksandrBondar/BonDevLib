@@ -38,10 +38,11 @@ namespace bondev
         template <typename Func, typename... Args>
         void giveTask(bondev::TaskPriority priority, Func&& func, Args&&... args)
         {
-            bondev::Task task = std::bind(std::forward<Func>(func), std::forward<Args>(args)...);
-            task.setTaskPriority(priority);
-            _tasks.push(task);
-        }
+            auto task = std::make_shared<Task>(
+                std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
+            task->setTaskPriority(priority);
+            _tasks.push(std::move(task));
+        }   
 
         void setThreadName(const std::string& name) { _threadName = name; }
         void setThreadSyncType(ThreadSyncType syncType) { _syncType = syncType; }
@@ -59,7 +60,7 @@ namespace bondev
         bool _stop{ false };
         std::jthread _thread;
         std::string _threadName;
-        std::queue<Task> _tasks;
+        std::queue<std::shared_ptr<Task>> _tasks;
         WorkStatus _workStatus{ WorkStatus::Waiting };
         ThreadSyncType _syncType{ ThreadSyncType::Join };
     };
