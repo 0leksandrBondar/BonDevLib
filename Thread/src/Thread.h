@@ -4,6 +4,7 @@
 
 #include <queue>
 #include <functional>
+#include <memory>
 #include <thread>
 
 namespace bondev
@@ -28,7 +29,7 @@ namespace bondev
     public:
         Thread() = default;
         template <typename Func, typename... Args>
-        Thread(bondev::TaskPriority priority, Func&& func, Args&&... args);
+        Thread(TaskPriority priority, Func&& func, Args&&... args);
 
         virtual ~Thread();
 
@@ -36,13 +37,13 @@ namespace bondev
         void stopThread();
 
         template <typename Func, typename... Args>
-        void giveTask(bondev::TaskPriority priority, Func&& func, Args&&... args)
+        void giveTask(TaskPriority priority, Func&& func, Args&&... args)
         {
-            auto task = std::make_shared<Task>(
-                std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
+            auto task
+                = std::make_shared<Task>(std::forward<Func>(func), std::forward<Args>(args)...);
             task->setTaskPriority(priority);
             _tasks.push(std::move(task));
-        }   
+        }
 
         void setThreadName(const std::string& name) { _threadName = name; }
         void setThreadSyncType(ThreadSyncType syncType) { _syncType = syncType; }

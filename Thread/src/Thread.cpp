@@ -3,12 +3,9 @@
 namespace bondev
 {
     template <typename Func, typename... Args>
-    Thread::Thread(bondev::TaskPriority priority, Func&& func, Args&&... args)
+    Thread::Thread(TaskPriority priority, Func&& func, Args&&... args)
     {
-        auto task = std::make_shared<Task>(
-            std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
-        task->setTaskPriority(priority);
-        _tasks.push(std::move(task));
+        giveTask(priority, std::forward<Func>(func), std::forward<Args>(args)...);
     }
 
     Thread::~Thread() { stopThread(); }
