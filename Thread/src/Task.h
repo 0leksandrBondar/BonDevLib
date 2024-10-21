@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <functional>
+#include <string>
 
 namespace bondev
 {
@@ -46,14 +47,22 @@ namespace bondev
             return *this;
         }
 
-        void execute() const { _task(); }
+        void execute()
+        {
+            _taskStatus = TaskStatus::Started;
+            _task();
+            _taskStatus = TaskStatus::Complited;
+        }
 
+        void setTaskName(const std::string& taskName) { _taskName = taskName; }
         void setTaskPriority(const TaskPriority priority) { _taskPriority = priority; }
 
+        [[nodiscard]] std::string getTaskName() const { return _taskName; }
         [[nodiscard]] TaskStatus getTaskStatus() const { return _taskStatus.load(); }
         [[nodiscard]] TaskPriority getTaskPriority() const { return _taskPriority.load(); }
 
     private:
+        std::string _taskName;
         std::function<void()> _task;
         std::atomic<TaskStatus> _taskStatus{ TaskStatus::Waiting };
         std::atomic<TaskPriority> _taskPriority{ TaskPriority::Low };
