@@ -22,14 +22,21 @@ namespace bondev
         InProgress,
     };
 
-    class Thread
+    class Thread final
     {
         using ThreadId = std::thread::id;
 
     public:
         Thread() = default;
+        Thread(const Thread&) = delete;
+        Thread& operator=(const Thread&) = delete;
+
         template <typename Func, typename... Args>
         Thread(TaskPriority priority, Func&& func, Args&&... args);
+
+        Thread(Thread&& other) noexcept { *this = std::move(other); }
+
+        Thread& operator=(Thread&& other) noexcept;
 
         virtual ~Thread();
 
@@ -37,16 +44,17 @@ namespace bondev
         void stopThread();
 
         template <typename Func, typename... Args>
-        void giveTask(TaskPriority priority, Func&& func, Args&&... args)
+        std::shared_ptr<Task> giveTask(TaskPriority priority, Func&& func, Args&&... args)
         {
             auto task
                 = std::make_shared<Task>(std::forward<Func>(func), std::forward<Args>(args)...);
             task->setTaskPriority(priority);
-            _tasks.push(std::move(task));
+            _tasks.push(task);
+            return task;
         }
 
         void setThreadName(const std::string& name) { _threadName = name; }
-        void setThreadSyncType(ThreadSyncType syncType) { _syncType = syncType; }
+        void setThreadSyncType(const ThreadSyncType syncType) { _syncType = syncType; }
 
         [[nodiscard]] WorkStatus getWorkStatus() const { return _workStatus; }
         [[nodiscard]] std::thread::id getThreadId() const { return _threadId; }
