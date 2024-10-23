@@ -11,7 +11,7 @@ namespace bondev
     {
         Waiting,
         Started,
-        Complited
+        Completed
     };
 
     enum class TaskPriority
@@ -51,7 +51,7 @@ namespace bondev
         {
             _taskStatus = TaskStatus::Started;
             _task();
-            _taskStatus = TaskStatus::Complited;
+            _taskStatus = TaskStatus::Completed;
         }
 
         void setTaskName(const std::string& taskName) { _taskName = taskName; }
